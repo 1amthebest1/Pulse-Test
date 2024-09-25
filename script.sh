@@ -271,12 +271,12 @@ if [ ! -f "$target_file" ]; then
 fi
 
 if ! command -v go &> /dev/null; then
-    read -p "[PROMPT] Do you want to install Go? (yes/no): " install_go_choice
+    read -p "[PROMPT] Go is not installed. Do you want to install Go? (yes/no): " install_go_choice
     if [ "$install_go_choice" == "yes" ]; then
         install_go
     else
         echo "[INFO] Skipping Go installation."
-        exit 1
+        # Don't exit, just continue with other steps
     fi
 else
     check_go_version
