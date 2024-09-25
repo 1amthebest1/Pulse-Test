@@ -301,9 +301,9 @@ while true; do
         install_ffuf
         run_ffuf
     elif [ "$tool_choice" == "x" ]; then
-        install_ffuf 
         run_xml_extractor
     elif [ "$tool_choice" == "p" ]; then
+        install_ffuf
         run_pulse
     elif [ "$tool_choice" == "u" ]; then
         install_and_run_url_extractor
