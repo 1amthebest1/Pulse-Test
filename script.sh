@@ -204,7 +204,7 @@ run_pulse() {
   read ffuf_input_file
   echo "Enter output file for ffuf results:"
   read ffuf_output_file
-
+  cd ffuf
   ./ffuf -w "$ffuf_input_file" -u FUZZ -mc 200 -of md -o temp_output.md
   grep -Eo 'https?://[^ ]+' temp_output.md | sort -u >> "$ffuf_output_file"
   rm temp_output.md
