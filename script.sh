@@ -4,27 +4,44 @@
 install_go() {
     echo "[INFO] Starting the installation of Go..."
 
+    # Clean up previous installations
     sudo rm -rf /usr/local/go
-    go_url="https://dl.google.com/go/go1.21.0.linux-amd64.tar.gz"
-    go_file="go1.21.0.linux-amd64.tar.gz"
+    sudo rm -rf /usr/bin/go  # Ensure no old Go binary remains
+
+    go_version="1.21.1"  # Update to the latest version
+    go_url="https://dl.google.com/go/go${go_version}.linux-amd64.tar.gz"
+    go_file="/tmp/go${go_version}.linux-amd64.tar.gz"
 
     echo "[INFO] Downloading Go from $go_url..."
     wget "$go_url" -O "$go_file"
+    if [ $? -ne 0 ]; then
+        echo "[ERROR] Failed to download Go. Exiting..."
+        return 1
+    fi
 
     echo "[INFO] Extracting Go to /usr/local..."
     sudo tar -C /usr/local -xzf "$go_file"
+    if [ $? -ne 0 ]; then
+        echo "[ERROR] Failed to extract Go. Exiting..."
+        return 1
+    fi
 
     echo "[INFO] Updating PATH to include Go..."
-    echo "export PATH=/usr/local/go/bin:\$PATH" >> ~/.bashrc
-    echo "export GOPATH=\$HOME/go" >> ~/.bashrc
-    echo "export PATH=\$PATH:\$GOPATH/bin" >> ~/.bashrc
+    # Add Go paths to .bashrc
+    grep -qxF 'export PATH=/usr/local/go/bin:$PATH' ~/.bashrc || echo 'export PATH=/usr/local/go/bin:$PATH' >> ~/.bashrc
+    grep -qxF 'export GOPATH=$HOME/go' ~/.bashrc || echo 'export GOPATH=$HOME/go' >> ~/.bashrc
+    grep -qxF 'export PATH=$PATH:$GOPATH/bin' ~/.bashrc || echo 'export PATH=$PATH:$GOPATH/bin' >> ~/.bashrc
 
-    # Update the current shell environment
+    # Reload bashrc for current session
+    source ~/.bashrc
+
+    # Export for current shell session (for immediate use)
     export PATH=/usr/local/go/bin:$PATH
     export GOPATH=$HOME/go
 
-    echo "[INFO] Go installation completed and PATH updated."
+    echo "[INFO] Go installation completed and PATH updated. Please restart your terminal or run 'source ~/.bashrc' if necessary."
 }
+
 
 # Function to check Go version
 check_go_version() {
